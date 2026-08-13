@@ -50,7 +50,7 @@ Durante o semestre, serão exploradas, de forma prática ou conceitual, as segui
 ```text
 SI-EBD1-2026/
 ├── res/               # Recursos, imagens, diagramas e demais artefatos utilizados no repositório
-├── aulas/             # Conteúdo teórico organizado por aula
+├── temas/             # Fechamentos teóricos organizados por tema
 ├── experimentos/      # Experimentos práticos e demonstrações
 ├── labs/              # Atividades de laboratório
 ├── referencias/       # Materiais de apoio e leituras complementares
