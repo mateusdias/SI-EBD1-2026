@@ -28,8 +28,13 @@
 --      estrangeira para EDITORAS;
 --   2. depois removemos EDITORAS.
 --
--- Os blocos abaixo BEGIN/END ignoram o erro ORA-00942, que ocorre quando
--- a tabela ainda nao existe.
+-- Os blocos abaixo BEGIN/END ignoram o erro ORA-00942, que
+-- ocorre quando a tabela ainda nao existe.
+--
+-- EXECUTE IMMEDIATE e uma instrucao do Oracle usada para
+-- executar um comando SQL escrito como texto dentro de um bloco
+-- PL/SQL. Aqui ela permite executar DROP TABLE dentro do bloco
+-- BEGIN/END e tratar possiveis erros na secao EXCEPTION.
 
 BEGIN
     EXECUTE IMMEDIATE 'DROP TABLE LIVROS';
