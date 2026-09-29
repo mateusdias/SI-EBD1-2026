@@ -1,0 +1,1153 @@
+------------------------------------------------------------
+-- SCRIPT COMPLETO - ORACLE DATABASE
+-- FABRICANTES, MODELOS E EXEMPLOS DE JOINS
+------------------------------------------------------------
+
+------------------------------------------------------------
+-- 1. CRIACAO DA TABELA FABRICANTES
+------------------------------------------------------------
+
+CREATE TABLE FABRICANTES (
+    CODIGO          NUMBER(10)      NOT NULL,
+    NOME            VARCHAR2(100)   NOT NULL,
+    PAIS_ORIGEM     VARCHAR2(80)    NOT NULL,
+
+    CONSTRAINT PK_FABRICANTES
+        PRIMARY KEY (CODIGO),
+
+    CONSTRAINT UK_FABRICANTES_NOME
+        UNIQUE (NOME)
+);
+
+
+------------------------------------------------------------
+-- 2. CRIACAO DA TABELA MODELOS
+------------------------------------------------------------
+
+CREATE TABLE MODELOS (
+    CODIGO                  NUMBER(10)      NOT NULL,
+    NOME                    VARCHAR2(100)   NOT NULL,
+    VERSAO                  VARCHAR2(100),
+    FABRICANTE_CODIGO       NUMBER(10)      NOT NULL,
+    ANO_INICIO_PRODUCAO     NUMBER(4)       NOT NULL,
+    ANO_FIM_PRODUCAO        NUMBER(4),
+    VALOR_LANCAMENTO        NUMBER(15,2),
+    MOEDA                   VARCHAR2(10),
+
+    CONSTRAINT PK_MODELOS
+        PRIMARY KEY (CODIGO),
+
+    CONSTRAINT FK_MODELOS_FABRICANTES
+        FOREIGN KEY (FABRICANTE_CODIGO)
+        REFERENCES FABRICANTES(CODIGO),
+
+    CONSTRAINT CK_MODELOS_ANO
+        CHECK (
+            ANO_FIM_PRODUCAO IS NULL
+            OR ANO_FIM_PRODUCAO >= ANO_INICIO_PRODUCAO
+        ),
+
+    CONSTRAINT CK_MODELOS_VALOR
+        CHECK (
+            VALOR_LANCAMENTO IS NULL
+            OR VALOR_LANCAMENTO >= 0
+        )
+);
+
+
+------------------------------------------------------------
+-- 3. SEED - FABRICANTES
+------------------------------------------------------------
+
+INSERT INTO FABRICANTES (CODIGO, NOME, PAIS_ORIGEM)
+VALUES (1, 'Volkswagen', 'Alemanha');
+
+INSERT INTO FABRICANTES (CODIGO, NOME, PAIS_ORIGEM)
+VALUES (2, 'Ford', 'Estados Unidos');
+
+INSERT INTO FABRICANTES (CODIGO, NOME, PAIS_ORIGEM)
+VALUES (3, 'Toyota', 'Japao');
+
+INSERT INTO FABRICANTES (CODIGO, NOME, PAIS_ORIGEM)
+VALUES (4, 'Honda', 'Japao');
+
+INSERT INTO FABRICANTES (CODIGO, NOME, PAIS_ORIGEM)
+VALUES (5, 'Fiat', 'Italia');
+
+INSERT INTO FABRICANTES (CODIGO, NOME, PAIS_ORIGEM)
+VALUES (6, 'Chevrolet', 'Estados Unidos');
+
+INSERT INTO FABRICANTES (CODIGO, NOME, PAIS_ORIGEM)
+VALUES (7, 'BMW', 'Alemanha');
+
+INSERT INTO FABRICANTES (CODIGO, NOME, PAIS_ORIGEM)
+VALUES (8, 'Mercedes-Benz', 'Alemanha');
+
+-- ESTE FABRICANTE FOI INSERIDO SEM MODELOS
+-- PROPOSITALMENTE PARA DEMONSTRAR OUTER JOINS.
+
+INSERT INTO FABRICANTES (CODIGO, NOME, PAIS_ORIGEM)
+VALUES (9, 'Porsche', 'Alemanha');
+
+
+------------------------------------------------------------
+-- 4. SEED - MODELOS
+------------------------------------------------------------
+
+INSERT INTO MODELOS (
+    CODIGO,
+    NOME,
+    VERSAO,
+    FABRICANTE_CODIGO,
+    ANO_INICIO_PRODUCAO,
+    ANO_FIM_PRODUCAO,
+    VALOR_LANCAMENTO,
+    MOEDA
+)
+VALUES (
+    101,
+    'Golf',
+    'GTI',
+    1,
+    1976,
+    NULL,
+    13850.00,
+    'DEM'
+);
+
+
+INSERT INTO MODELOS (
+    CODIGO,
+    NOME,
+    VERSAO,
+    FABRICANTE_CODIGO,
+    ANO_INICIO_PRODUCAO,
+    ANO_FIM_PRODUCAO,
+    VALOR_LANCAMENTO,
+    MOEDA
+)
+VALUES (
+    102,
+    'Fusca',
+    '1300',
+    1,
+    1938,
+    2003,
+    990.00,
+    'DEM'
+);
+
+
+INSERT INTO MODELOS (
+    CODIGO,
+    NOME,
+    VERSAO,
+    FABRICANTE_CODIGO,
+    ANO_INICIO_PRODUCAO,
+    ANO_FIM_PRODUCAO,
+    VALOR_LANCAMENTO,
+    MOEDA
+)
+VALUES (
+    201,
+    'Mustang',
+    'Fastback',
+    2,
+    1964,
+    NULL,
+    2368.00,
+    'USD'
+);
+
+
+INSERT INTO MODELOS (
+    CODIGO,
+    NOME,
+    VERSAO,
+    FABRICANTE_CODIGO,
+    ANO_INICIO_PRODUCAO,
+    ANO_FIM_PRODUCAO,
+    VALOR_LANCAMENTO,
+    MOEDA
+)
+VALUES (
+    202,
+    'Model T',
+    'Touring',
+    2,
+    1908,
+    1927,
+    850.00,
+    'USD'
+);
+
+
+INSERT INTO MODELOS (
+    CODIGO,
+    NOME,
+    VERSAO,
+    FABRICANTE_CODIGO,
+    ANO_INICIO_PRODUCAO,
+    ANO_FIM_PRODUCAO,
+    VALOR_LANCAMENTO,
+    MOEDA
+)
+VALUES (
+    301,
+    'Corolla',
+    'Sedan',
+    3,
+    1966,
+    NULL,
+    432000.00,
+    'JPY'
+);
+
+
+INSERT INTO MODELOS (
+    CODIGO,
+    NOME,
+    VERSAO,
+    FABRICANTE_CODIGO,
+    ANO_INICIO_PRODUCAO,
+    ANO_FIM_PRODUCAO,
+    VALOR_LANCAMENTO,
+    MOEDA
+)
+VALUES (
+    302,
+    'Supra',
+    'A80',
+    3,
+    1993,
+    2002,
+    3600000.00,
+    'JPY'
+);
+
+
+INSERT INTO MODELOS (
+    CODIGO,
+    NOME,
+    VERSAO,
+    FABRICANTE_CODIGO,
+    ANO_INICIO_PRODUCAO,
+    ANO_FIM_PRODUCAO,
+    VALOR_LANCAMENTO,
+    MOEDA
+)
+VALUES (
+    401,
+    'Civic',
+    'Sedan',
+    4,
+    1972,
+    NULL,
+    415000.00,
+    'JPY'
+);
+
+
+INSERT INTO MODELOS (
+    CODIGO,
+    NOME,
+    VERSAO,
+    FABRICANTE_CODIGO,
+    ANO_INICIO_PRODUCAO,
+    ANO_FIM_PRODUCAO,
+    VALOR_LANCAMENTO,
+    MOEDA
+)
+VALUES (
+    501,
+    'Uno',
+    'Mille',
+    5,
+    1983,
+    2013,
+    7830.00,
+    'ITL'
+);
+
+
+INSERT INTO MODELOS (
+    CODIGO,
+    NOME,
+    VERSAO,
+    FABRICANTE_CODIGO,
+    ANO_INICIO_PRODUCAO,
+    ANO_FIM_PRODUCAO,
+    VALOR_LANCAMENTO,
+    MOEDA
+)
+VALUES (
+    502,
+    '500',
+    '1.2',
+    5,
+    2007,
+    NULL,
+    10500.00,
+    'EUR'
+);
+
+
+INSERT INTO MODELOS (
+    CODIGO,
+    NOME,
+    VERSAO,
+    FABRICANTE_CODIGO,
+    ANO_INICIO_PRODUCAO,
+    ANO_FIM_PRODUCAO,
+    VALOR_LANCAMENTO,
+    MOEDA
+)
+VALUES (
+    601,
+    'Camaro',
+    'SS',
+    6,
+    1966,
+    NULL,
+    2572.00,
+    'USD'
+);
+
+
+INSERT INTO MODELOS (
+    CODIGO,
+    NOME,
+    VERSAO,
+    FABRICANTE_CODIGO,
+    ANO_INICIO_PRODUCAO,
+    ANO_FIM_PRODUCAO,
+    VALOR_LANCAMENTO,
+    MOEDA
+)
+VALUES (
+    701,
+    'Serie 3',
+    'E30',
+    7,
+    1982,
+    1994,
+    18490.00,
+    'DEM'
+);
+
+
+INSERT INTO MODELOS (
+    CODIGO,
+    NOME,
+    VERSAO,
+    FABRICANTE_CODIGO,
+    ANO_INICIO_PRODUCAO,
+    ANO_FIM_PRODUCAO,
+    VALOR_LANCAMENTO,
+    MOEDA
+)
+VALUES (
+    801,
+    'Classe C',
+    'W202',
+    8,
+    1993,
+    2000,
+    39900.00,
+    'DEM'
+);
+
+
+COMMIT;
+
+
+------------------------------------------------------------
+-- 5. CONSULTA BASICA COM INNER JOIN
+------------------------------------------------------------
+
+-- EXIBE TODOS OS MODELOS COM SEUS FABRICANTES.
+--
+-- INNER JOIN RETORNA APENAS REGISTROS QUE POSSUEM
+-- CORRESPONDENCIA NAS DUAS TABELAS.
+
+SELECT
+    M.CODIGO,
+    F.NOME AS NOME_FABRICANTE,
+    M.NOME AS NOME_MODELO,
+    M.VERSAO,
+    F.PAIS_ORIGEM,
+    M.ANO_INICIO_PRODUCAO,
+    M.ANO_FIM_PRODUCAO,
+    M.VALOR_LANCAMENTO,
+    M.MOEDA
+FROM MODELOS M
+INNER JOIN FABRICANTES F
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+ORDER BY
+    F.NOME,
+    M.NOME;
+
+
+------------------------------------------------------------
+-- 6. INNER JOIN SIMPLES
+------------------------------------------------------------
+
+-- MOSTRA O NOME DO MODELO, VERSAO E FABRICANTE.
+
+SELECT
+    M.NOME AS MODELO,
+    M.VERSAO,
+    F.NOME AS FABRICANTE
+FROM MODELOS M
+INNER JOIN FABRICANTES F
+    ON M.FABRICANTE_CODIGO = F.CODIGO;
+
+
+------------------------------------------------------------
+-- 7. INNER JOIN COM FILTRO
+------------------------------------------------------------
+
+-- MOSTRA SOMENTE MODELOS DE FABRICANTES JAPONESES.
+
+SELECT
+    M.NOME AS MODELO,
+    M.VERSAO,
+    F.NOME AS FABRICANTE,
+    F.PAIS_ORIGEM
+FROM MODELOS M
+INNER JOIN FABRICANTES F
+    ON M.FABRICANTE_CODIGO = F.CODIGO
+WHERE F.PAIS_ORIGEM = 'Japao';
+
+
+------------------------------------------------------------
+-- 8. INNER JOIN COM ORDENACAO
+------------------------------------------------------------
+
+-- ORDENA PRIMEIRO PELO FABRICANTE
+-- E DEPOIS PELO MODELO.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    M.NOME AS MODELO,
+    M.VERSAO
+FROM FABRICANTES F
+INNER JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+ORDER BY
+    F.NOME,
+    M.NOME;
+
+
+------------------------------------------------------------
+-- 9. INNER JOIN COM BETWEEN
+------------------------------------------------------------
+
+-- MOSTRA MODELOS QUE COMECARAM A SER PRODUZIDOS
+-- ENTRE 1960 E 1990.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    M.NOME AS MODELO,
+    M.ANO_INICIO_PRODUCAO
+FROM MODELOS M
+INNER JOIN FABRICANTES F
+    ON M.FABRICANTE_CODIGO = F.CODIGO
+WHERE M.ANO_INICIO_PRODUCAO
+    BETWEEN 1960 AND 1990
+ORDER BY
+    M.ANO_INICIO_PRODUCAO;
+
+
+------------------------------------------------------------
+-- 10. LEFT JOIN
+------------------------------------------------------------
+
+-- LEFT JOIN RETORNA TODOS OS REGISTROS
+-- DA TABELA LOCALIZADA A ESQUERDA.
+--
+-- NESTE CASO, TODOS OS FABRICANTES APARECEM.
+--
+-- SE O FABRICANTE NAO POSSUIR MODELO,
+-- AS COLUNAS DE MODELOS RECEBEM NULL.
+--
+-- A PORSCHE APARECERA COM MODELO NULL.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    M.NOME AS MODELO,
+    M.VERSAO
+FROM FABRICANTES F
+LEFT JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+ORDER BY
+    F.NOME;
+
+
+------------------------------------------------------------
+-- 11. FABRICANTES SEM MODELOS
+------------------------------------------------------------
+
+-- UM USO MUITO COMUM DE LEFT JOIN:
+-- LOCALIZAR REGISTROS SEM CORRESPONDENCIA.
+--
+-- M.CODIGO SERA NULL QUANDO NAO EXISTIR
+-- MODELO ASSOCIADO AO FABRICANTE.
+
+SELECT
+    F.CODIGO,
+    F.NOME AS FABRICANTE
+FROM FABRICANTES F
+LEFT JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+WHERE M.CODIGO IS NULL;
+
+
+-- RESULTADO ESPERADO:
+--
+-- 9 | Porsche
+
+
+------------------------------------------------------------
+-- 12. LEFT JOIN COM COUNT
+------------------------------------------------------------
+
+-- CONTA QUANTOS MODELOS CADA FABRICANTE POSSUI.
+--
+-- LEFT JOIN GARANTE QUE FABRICANTES SEM MODELOS
+-- TAMBEM APARECAM.
+--
+-- A PORSCHE APARECERA COM ZERO.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    COUNT(M.CODIGO) AS QUANTIDADE_MODELOS
+FROM FABRICANTES F
+LEFT JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+GROUP BY
+    F.NOME
+ORDER BY
+    QUANTIDADE_MODELOS DESC;
+
+
+------------------------------------------------------------
+-- 13. RIGHT JOIN
+------------------------------------------------------------
+
+-- RIGHT JOIN PRESERVA TODOS OS REGISTROS
+-- DA TABELA LOCALIZADA A DIREITA.
+--
+-- AQUI TODOS OS MODELOS SERAO RETORNADOS.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    M.NOME AS MODELO
+FROM FABRICANTES F
+RIGHT JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO;
+
+
+-- COMO FABRICANTE_CODIGO POSSUI FOREIGN KEY,
+-- NAO DEVERIA EXISTIR MODELO SEM FABRICANTE.
+
+
+------------------------------------------------------------
+-- 14. FULL OUTER JOIN
+------------------------------------------------------------
+
+-- FULL OUTER JOIN RETORNA:
+--
+-- 1. REGISTROS COM CORRESPONDENCIA;
+-- 2. REGISTROS EXISTENTES SOMENTE NA ESQUERDA;
+-- 3. REGISTROS EXISTENTES SOMENTE NA DIREITA.
+--
+-- A PORSCHE APARECERA MESMO SEM POSSUIR MODELOS.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    M.NOME AS MODELO
+FROM FABRICANTES F
+FULL OUTER JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+ORDER BY
+    F.NOME,
+    M.NOME;
+
+
+------------------------------------------------------------
+-- 15. QUANTIDADE DE MODELOS POR PAIS
+------------------------------------------------------------
+
+-- AGRUPA OS MODELOS DE ACORDO COM O PAIS
+-- DE ORIGEM DO FABRICANTE.
+
+SELECT
+    F.PAIS_ORIGEM,
+    COUNT(M.CODIGO) AS QUANTIDADE_MODELOS
+FROM FABRICANTES F
+INNER JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+GROUP BY
+    F.PAIS_ORIGEM
+ORDER BY
+    QUANTIDADE_MODELOS DESC;
+
+
+------------------------------------------------------------
+-- 16. FABRICANTES COM MAIS DE UM MODELO
+------------------------------------------------------------
+
+-- HAVING FILTRA OS RESULTADOS DEPOIS
+-- DA OPERACAO DE GROUP BY.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    COUNT(M.CODIGO) AS QUANTIDADE_MODELOS
+FROM FABRICANTES F
+INNER JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+GROUP BY
+    F.NOME
+HAVING COUNT(M.CODIGO) > 1
+ORDER BY
+    QUANTIDADE_MODELOS DESC;
+
+
+------------------------------------------------------------
+-- 17. MODELOS AINDA EM PRODUCAO
+------------------------------------------------------------
+
+-- CONSIDERAMOS:
+--
+-- ANO_FIM_PRODUCAO IS NULL
+--
+-- COMO INDICACAO DE QUE O MODELO
+-- AINDA ESTA EM PRODUCAO.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    M.NOME AS MODELO,
+    M.ANO_INICIO_PRODUCAO
+FROM MODELOS M
+INNER JOIN FABRICANTES F
+    ON M.FABRICANTE_CODIGO = F.CODIGO
+WHERE M.ANO_FIM_PRODUCAO IS NULL;
+
+
+------------------------------------------------------------
+-- 18. MODELOS FORA DE PRODUCAO
+------------------------------------------------------------
+
+-- RETORNA SOMENTE MODELOS QUE POSSUEM
+-- UM ANO DE FIM DE PRODUCAO.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    M.NOME AS MODELO,
+    M.ANO_INICIO_PRODUCAO,
+    M.ANO_FIM_PRODUCAO
+FROM MODELOS M
+INNER JOIN FABRICANTES F
+    ON M.FABRICANTE_CODIGO = F.CODIGO
+WHERE M.ANO_FIM_PRODUCAO IS NOT NULL;
+
+
+------------------------------------------------------------
+-- 19. CALCULANDO O TEMPO DE PRODUCAO
+------------------------------------------------------------
+
+-- CALCULA APROXIMADAMENTE QUANTOS ANOS
+-- UM MODELO PERMANECEU EM PRODUCAO.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    M.NOME AS MODELO,
+    M.ANO_INICIO_PRODUCAO,
+    M.ANO_FIM_PRODUCAO,
+    M.ANO_FIM_PRODUCAO - M.ANO_INICIO_PRODUCAO
+        AS ANOS_DE_PRODUCAO
+FROM MODELOS M
+INNER JOIN FABRICANTES F
+    ON M.FABRICANTE_CODIGO = F.CODIGO
+WHERE M.ANO_FIM_PRODUCAO IS NOT NULL
+ORDER BY
+    ANOS_DE_PRODUCAO DESC;
+
+
+------------------------------------------------------------
+-- 20. MODELOS COM PRECO EM DOLAR
+------------------------------------------------------------
+
+-- RETORNA SOMENTE MODELOS CUJO VALOR
+-- DE LANCAMENTO FOI REGISTRADO EM USD.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    M.NOME AS MODELO,
+    M.VALOR_LANCAMENTO,
+    M.MOEDA
+FROM MODELOS M
+INNER JOIN FABRICANTES F
+    ON M.FABRICANTE_CODIGO = F.CODIGO
+WHERE M.MOEDA = 'USD'
+ORDER BY
+    M.VALOR_LANCAMENTO DESC;
+
+
+------------------------------------------------------------
+-- 21. MAIOR VALOR DE LANCAMENTO POR FABRICANTE
+------------------------------------------------------------
+
+-- MAX RETORNA O MAIOR VALOR ENCONTRADO
+-- DENTRO DE CADA GRUPO.
+--
+-- ATENCAO:
+-- ECONOMICAMENTE, NAO DEVEMOS COMPARAR
+-- DIRETAMENTE VALORES EM MOEDAS DIFERENTES.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    MAX(M.VALOR_LANCAMENTO) AS MAIOR_VALOR_LANCAMENTO
+FROM FABRICANTES F
+INNER JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+GROUP BY
+    F.NOME;
+
+
+------------------------------------------------------------
+-- 22. MEDIA DE PRECO POR FABRICANTE E MOEDA
+------------------------------------------------------------
+
+-- AGRUPAMOS TAMBEM PELA MOEDA PARA EVITAR
+-- CALCULAR UMA MEDIA ENTRE MOEDAS DIFERENTES.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    M.MOEDA,
+    AVG(M.VALOR_LANCAMENTO) AS MEDIA_VALOR_LANCAMENTO
+FROM FABRICANTES F
+INNER JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+GROUP BY
+    F.NOME,
+    M.MOEDA
+ORDER BY
+    F.NOME;
+
+
+------------------------------------------------------------
+-- 23. CROSS JOIN
+------------------------------------------------------------
+
+-- CROSS JOIN REALIZA O PRODUTO CARTESIANO.
+--
+-- CADA FABRICANTE SERA COMBINADO
+-- COM TODOS OS MODELOS.
+--
+-- TEMOS:
+--
+-- 9 FABRICANTES
+-- 12 MODELOS
+--
+-- 9 X 12 = 108 LINHAS.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    M.NOME AS MODELO
+FROM FABRICANTES F
+CROSS JOIN MODELOS M;
+
+
+------------------------------------------------------------
+-- 24. COUNT DO CROSS JOIN
+------------------------------------------------------------
+
+-- MOSTRA QUANTAS COMBINACOES FORAM GERADAS
+-- PELO PRODUTO CARTESIANO.
+
+SELECT
+    COUNT(*) AS TOTAL_COMBINACOES
+FROM FABRICANTES F
+CROSS JOIN MODELOS M;
+
+
+-- RESULTADO:
+--
+-- 108
+
+
+------------------------------------------------------------
+-- 25. JOIN SEM ESCREVER INNER
+------------------------------------------------------------
+
+-- QUANDO ESCREVEMOS APENAS JOIN,
+-- O BANCO INTERPRETA COMO INNER JOIN.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    M.NOME AS MODELO,
+    M.VERSAO
+FROM FABRICANTES F
+JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO;
+
+
+------------------------------------------------------------
+-- 26. JOIN COM CASE
+------------------------------------------------------------
+
+-- CASE PERMITE CRIAR UMA CLASSIFICACAO
+-- DE ACORDO COM OS VALORES DAS COLUNAS.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    M.NOME AS MODELO,
+
+    CASE
+        WHEN M.ANO_FIM_PRODUCAO IS NULL
+            THEN 'Em producao'
+        ELSE
+            'Producao encerrada'
+    END AS STATUS_PRODUCAO
+
+FROM MODELOS M
+INNER JOIN FABRICANTES F
+    ON M.FABRICANTE_CODIGO = F.CODIGO;
+
+
+------------------------------------------------------------
+-- 27. JOIN COM NVL
+------------------------------------------------------------
+
+-- NVL E UMA FUNCAO DO ORACLE QUE PERMITE
+-- SUBSTITUIR UM VALOR NULL.
+--
+-- SE ANO_FIM_PRODUCAO FOR NULL,
+-- SERA EXIBIDO O TEXTO:
+--
+-- 'Ainda em producao'
+
+SELECT
+    F.NOME AS FABRICANTE,
+    M.NOME AS MODELO,
+
+    TO_CHAR(M.ANO_INICIO_PRODUCAO)
+        AS INICIO_PRODUCAO,
+
+    NVL(
+        TO_CHAR(M.ANO_FIM_PRODUCAO),
+        'Ainda em producao'
+    ) AS FIM_PRODUCAO
+
+FROM MODELOS M
+INNER JOIN FABRICANTES F
+    ON M.FABRICANTE_CODIGO = F.CODIGO;
+
+
+------------------------------------------------------------
+-- 28. LEFT JOIN COM FILTRO NO ON
+------------------------------------------------------------
+
+-- OBJETIVO:
+--
+-- MOSTRAR TODOS OS FABRICANTES,
+-- MAS SOMENTE SEUS MODELOS QUE
+-- AINDA ESTAO EM PRODUCAO.
+--
+-- A CONDICAO FOI COLOCADA NO ON.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    M.NOME AS MODELO
+FROM FABRICANTES F
+LEFT JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+    AND M.ANO_FIM_PRODUCAO IS NULL;
+
+
+-- DESTA FORMA, TODOS OS FABRICANTES
+-- CONTINUAM APARECENDO.
+--
+-- SE UM FABRICANTE NAO POSSUIR MODELO
+-- EM PRODUCAO:
+--
+-- FABRICANTE | NULL
+
+
+------------------------------------------------------------
+-- 29. LEFT JOIN COM FILTRO NO WHERE
+------------------------------------------------------------
+
+-- ESTE EXEMPLO E IMPORTANTE PARA COMPARAR
+-- COM O EXEMPLO ANTERIOR.
+--
+-- O WHERE E APLICADO DEPOIS DO JOIN.
+--
+-- DEPENDENDO DA CONDICAO, COLOCAR O FILTRO
+-- NO WHERE PODE ELIMINAR REGISTROS GERADOS
+-- PELO LEFT JOIN.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    M.NOME AS MODELO
+FROM FABRICANTES F
+LEFT JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+WHERE M.ANO_FIM_PRODUCAO IS NULL;
+
+
+------------------------------------------------------------
+-- 30. DIFERENCA ENTRE FILTRO NO ON E NO WHERE
+------------------------------------------------------------
+
+-- EXEMPLO MAIS CLARO:
+--
+-- QUEREMOS TODOS OS FABRICANTES,
+-- MAS APENAS MODELOS QUE COMECARAM
+-- A SER PRODUZIDOS DEPOIS DO ANO 2000.
+--
+-- COLOCANDO A CONDICAO NO ON,
+-- TODOS OS FABRICANTES CONTINUAM APARECENDO.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    M.NOME AS MODELO,
+    M.ANO_INICIO_PRODUCAO
+FROM FABRICANTES F
+LEFT JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+    AND M.ANO_INICIO_PRODUCAO >= 2000
+ORDER BY
+    F.NOME;
+
+
+------------------------------------------------------------
+-- 31. MESMO FILTRO, MAS COLOCADO NO WHERE
+------------------------------------------------------------
+
+-- AGORA A CONDICAO E APLICADA DEPOIS
+-- DA REALIZACAO DO LEFT JOIN.
+--
+-- OS FABRICANTES QUE NAO TIVEREM MODELOS
+-- A PARTIR DE 2000 SERAO REMOVIDOS.
+--
+-- NA PRATICA, PARA ESSE FILTRO,
+-- O RESULTADO PASSA A SE COMPORTAR
+-- DE FORMA PARECIDA COM UM INNER JOIN.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    M.NOME AS MODELO,
+    M.ANO_INICIO_PRODUCAO
+FROM FABRICANTES F
+LEFT JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+WHERE M.ANO_INICIO_PRODUCAO >= 2000
+ORDER BY
+    F.NOME;
+
+
+------------------------------------------------------------
+-- 32. MODELO MAIS ANTIGO POR FABRICANTE
+------------------------------------------------------------
+
+-- MIN RETORNA O MENOR ANO DE INICIO
+-- DE PRODUCAO REGISTRADO PARA CADA FABRICANTE.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    MIN(M.ANO_INICIO_PRODUCAO)
+        AS PRIMEIRO_ANO_MODELO
+FROM FABRICANTES F
+INNER JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+GROUP BY
+    F.NOME
+ORDER BY
+    PRIMEIRO_ANO_MODELO;
+
+
+------------------------------------------------------------
+-- 33. MODELO MAIS RECENTE POR FABRICANTE
+------------------------------------------------------------
+
+-- MAX RETORNA O MAIOR ANO DE INICIO
+-- DE PRODUCAO PARA CADA FABRICANTE.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    MAX(M.ANO_INICIO_PRODUCAO)
+        AS MODELO_MAIS_RECENTE
+FROM FABRICANTES F
+INNER JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+GROUP BY
+    F.NOME
+ORDER BY
+    MODELO_MAIS_RECENTE DESC;
+
+
+------------------------------------------------------------
+-- 34. QUANTIDADE DE MODELOS EM PRODUCAO
+------------------------------------------------------------
+
+-- CONTA SOMENTE OS MODELOS QUE POSSUEM
+-- ANO_FIM_PRODUCAO NULL.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    COUNT(M.CODIGO) AS MODELOS_EM_PRODUCAO
+FROM FABRICANTES F
+INNER JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+WHERE M.ANO_FIM_PRODUCAO IS NULL
+GROUP BY
+    F.NOME
+ORDER BY
+    MODELOS_EM_PRODUCAO DESC;
+
+
+------------------------------------------------------------
+-- 35. TODOS OS FABRICANTES E QUANTOS MODELOS
+--     AINDA POSSUEM EM PRODUCAO
+------------------------------------------------------------
+
+-- AQUI O FILTRO ESTA NO ON.
+--
+-- ISSO GARANTE QUE FABRICANTES SEM MODELO
+-- EM PRODUCAO TAMBEM APARECAM COM ZERO.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    COUNT(M.CODIGO) AS MODELOS_EM_PRODUCAO
+FROM FABRICANTES F
+LEFT JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+    AND M.ANO_FIM_PRODUCAO IS NULL
+GROUP BY
+    F.NOME
+ORDER BY
+    MODELOS_EM_PRODUCAO DESC;
+
+
+------------------------------------------------------------
+-- 36. VALOR MEDIO DOS MODELOS EM USD
+------------------------------------------------------------
+
+-- COMO ESTAMOS FILTRANDO UMA UNICA MOEDA,
+-- A MEDIA PASSA A POSSUIR SIGNIFICADO MAIS COERENTE.
+
+SELECT
+    F.NOME AS FABRICANTE,
+    AVG(M.VALOR_LANCAMENTO)
+        AS VALOR_MEDIO_USD
+FROM FABRICANTES F
+INNER JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+WHERE M.MOEDA = 'USD'
+GROUP BY
+    F.NOME;
+
+
+------------------------------------------------------------
+-- 37. MODELO MAIS CARO ENTRE OS REGISTRADOS EM USD
+------------------------------------------------------------
+
+SELECT
+    F.NOME AS FABRICANTE,
+    M.NOME AS MODELO,
+    M.VALOR_LANCAMENTO,
+    M.MOEDA
+FROM FABRICANTES F
+INNER JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+WHERE M.MOEDA = 'USD'
+AND M.VALOR_LANCAMENTO = (
+    SELECT MAX(M2.VALOR_LANCAMENTO)
+    FROM MODELOS M2
+    WHERE M2.MOEDA = 'USD'
+);
+
+
+------------------------------------------------------------
+-- 38. FABRICANTES QUE POSSUEM MODELOS EM USD
+------------------------------------------------------------
+
+-- DISTINCT REMOVE VALORES DUPLICADOS.
+--
+-- UM FABRICANTE APARECERA SOMENTE UMA VEZ,
+-- MESMO QUE POSSUA MAIS DE UM MODELO EM USD.
+
+SELECT DISTINCT
+    F.CODIGO,
+    F.NOME AS FABRICANTE
+FROM FABRICANTES F
+INNER JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+WHERE M.MOEDA = 'USD';
+
+
+------------------------------------------------------------
+-- 39. FABRICANTES E QUANTIDADE DE MOEDAS DIFERENTES
+------------------------------------------------------------
+
+SELECT
+    F.NOME AS FABRICANTE,
+    COUNT(DISTINCT M.MOEDA)
+        AS QUANTIDADE_MOEDAS
+FROM FABRICANTES F
+LEFT JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+GROUP BY
+    F.NOME
+ORDER BY
+    QUANTIDADE_MOEDAS DESC;
+
+
+------------------------------------------------------------
+-- 40. CONSULTA FINAL - RELATORIO COMPLETO
+------------------------------------------------------------
+
+-- UM EXEMPLO DE CONSULTA MAIS COMPLETA,
+-- COM JOIN, CASE, NVL E ORDER BY.
+
+SELECT
+    F.CODIGO AS CODIGO_FABRICANTE,
+    F.NOME AS FABRICANTE,
+    F.PAIS_ORIGEM,
+
+    M.CODIGO AS CODIGO_MODELO,
+    M.NOME AS MODELO,
+    M.VERSAO,
+
+    M.ANO_INICIO_PRODUCAO,
+
+    NVL(
+        TO_CHAR(M.ANO_FIM_PRODUCAO),
+        'Ainda em producao'
+    ) AS FIM_PRODUCAO,
+
+    CASE
+        WHEN M.ANO_FIM_PRODUCAO IS NULL
+            THEN 'ATIVO'
+        ELSE
+            'DESCONTINUADO'
+    END AS STATUS_MODELO,
+
+    M.VALOR_LANCAMENTO,
+    M.MOEDA
+
+FROM FABRICANTES F
+LEFT JOIN MODELOS M
+    ON F.CODIGO = M.FABRICANTE_CODIGO
+
+ORDER BY
+    F.NOME,
+    M.NOME;
+
+
+------------------------------------------------------------
+-- FIM DO SCRIPT
+------------------------------------------------------------
